@@ -50,7 +50,7 @@ export default function App() {
       <CookingProvider>
 
 
-        <Stack.Navigator initialRouteName="login" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="welcome" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="welcome" component={welcomeScreen} />
           <Stack.Screen name="login" component={loginScreen} />
           <Stack.Screen name="register" component={registerScreen} />
