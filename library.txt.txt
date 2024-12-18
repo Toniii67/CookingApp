@@ -1,0 +1,16 @@
+@expo/vector-icons
+@react-navigation/bottom-tabs
+@react-navigation/native
+@react-navigation/stack
+@react-native-seoul/masonry-list
+axios
+react
+react-native
+react-native-gesture-handler
+react-native-heroicons
+react-native-keyboard-aware-scroll-view
+react-native-reanimated
+react-native-responsive-screen
+react-native-safe-area-context
+react-native-scroll-view
+react-native-svg

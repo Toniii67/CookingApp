@@ -1,0 +1,49 @@
+// {
+//   "name": "login",
+//   "slug": "login",
+//   "extra": {
+//     "eas": {
+//       "projectId": "f1bdd70e-59b6-47ce-a6c9-0225925dec44"
+//     }
+//   }
+// }
+
+
+{
+  "expo": {
+    "name": "login",
+    "slug": "login",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/avatar.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/avatar.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.franco.login",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/avatar.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
+    "web": {
+      "favicon": "./assets/avatar.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f1bdd70e-59b6-47ce-a6c9-0225925dec44"
+      }
+    }
+  }
+}
