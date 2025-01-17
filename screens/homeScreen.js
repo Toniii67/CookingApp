@@ -1,15 +1,17 @@
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { StatusBar } from 'expo-status-bar'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { BellIcon, MagnifyingGlassIcon } from 'react-native-heroicons/outline'
-import { SafeAreaView } from 'react-native-safe-area-context';
 import COLORS from '../constant/color';
 import { TextInput } from 'react-native-gesture-handler';
 import Categories from '../components/Categories';
 import { Fontisto, Ionicons } from '@expo/vector-icons';
 import axios from 'axios'
 import Recipes from '../components/Recipes';
+
+import { db } from '../App';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 
 const homeScreen = () => {
     const [activeCategory, setActiveCategory] = useState("Beef")
@@ -29,32 +31,66 @@ const homeScreen = () => {
 
     const getCategories = async () => {
         try {
-            const response = await axios.get('https://themealdb.com/api/json/v1/1/categories.php');
-            // console.log('got categories: ', response.data)
-            if (response && response.data) {
-                setCategories(response.data.categories)
+            const categoriesRef = collection(db, 'categories');
+            const categoriesSnapshot = await getDocs(categoriesRef);
+
+            if (categoriesSnapshot.empty) {
+                console.log('No categories found');
+                return;
             }
+
+            const categoriesData = categoriesSnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    strCategory: data.strCategory,
+                    strCategoryThumb: data.strCategoryThumb,
+                    strCategoryDescription: data.strCategoryDescription
+                };
+            });
+
+            console.log('Categories loaded:', categoriesData.length);
+            setCategories(categoriesData);
         } catch (err) {
-            console.log('error: ', err.message)
+            console.log('Error fetching categories:', err.message);
         }
     }
 
     const getRecipes = async (category = "Beef") => {
         try {
-            const response = await axios.get(`https://themealdb.com/api/json/v1/1/filter.php?c=${category}`);
-            // console.log('got recipe: ', response.data)
-            if (response && response.data) {
-                setMeals(response.data.meals)
+            const mealsRef = collection(db, 'meals');
+            const q = query(mealsRef, where("strCategory", "==", category));
+            const mealsSnapshot = await getDocs(q);
+
+            if (mealsSnapshot.empty) {
+                console.log('No meals found for category:', category);
+                return;
             }
+
+            const mealsData = mealsSnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    idMeal: data.idMeal,
+                    strMeal: data.strMeal,
+                    strMealThumb: data.strMealThumb,
+                    strCategory: data.strCategory,
+                };
+            });
+
+            console.log('Meals loaded:', mealsData.length);
+            setMeals(mealsData);
         } catch (err) {
-            console.log('error: ', err.message)
+            console.log('Error fetching meals:', err.message);
         }
     }
+
     return (
+
         <ScrollView
             showsVerticalScrollIndicator={false}
         >
-            <View style={{ flex: 1, backgroundColor: 'white' }}>
+            <View style={{ flex: 1, backgroundColor: 'white', paddingTop: 35 }}>
                 <View style={{ marginHorizontal: 22, marginTop: 25, paddingBottom: 25 }}>
                     <StatusBar style='dark' />
 

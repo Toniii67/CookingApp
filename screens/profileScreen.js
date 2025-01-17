@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import React from 'react'
+import GoogleMapView from '../components/GoogleMapView'
 
 const profileScreen = () => {
     return (
-        <View>
-            <Text>profileScreen</Text>
-        </View>
+        <SafeAreaView>
+            <GoogleMapView />
+        </SafeAreaView>
     )
 }
 

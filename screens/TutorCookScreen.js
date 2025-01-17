@@ -19,22 +19,34 @@ const TutorCookScreen = () => {
     const { meal } = route.params
     const { updateCookingStatus } = useCookingStatus();
 
+    const totalSteps = useRef(0);
     let [currentStepIndex, setCurrentStepIndex] = useState(0)
     const [cookingSteps, setCookingSteps] = useState([])
     const position = useRef(new Animated.ValueXY()).current
 
     useEffect(() => {
         if (meal?.strInstructions) {
-            // Split instructions into steps and clean them up
+            const regex = /\d+\.\s*/g;
             const steps = meal.strInstructions
-                .split('.')
-                .map(step => step.trim())
-                .filter(step => step.length > 0)
-            setCookingSteps(steps)
-            console.log('Total steps:', steps.length) // Debug log
+                .split(regex)
+                .map(step => {
+                    // Bersihkan teks dalam beberapa tahap
+                    return step
+                        .replace(/\\t/g, '') // Hapus \t
+                        .replace(/\\r/g, '') // Hapus \r
+                        .replace(/\\n/g, '') // Hapus \n
+                        .replace(/\s+/g, ' ') // Gabungkan multiple spaces menjadi single space
+                        .trim(); // Hapus whitespace di awal dan akhir
+                })
+                .filter(step => step.length > 0);
+            
+            setCookingSteps(steps);
+            totalSteps.current = steps.length;
+            console.log('Total steps:', steps.length);
+            console.log('Steps:', steps);
         }
-    }, [meal])
-
+    }, [meal]);
+    
     const panResponder = useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -59,14 +71,6 @@ const TutorCookScreen = () => {
                 position.flattenOffset()
                 console.log('Released:', gesture.dx) // Debug log
 
-                // Check for swipe threshold to determine if the swipe was valid
-                // if (Math.abs(gesture.dx) < SWIPE_THRESHOLD) {
-                //     console.log('Reset position - below threshold') // Debug log
-                //     Animated.spring(position, {
-                //         toValue: { x: 0, y: 0 },
-                //         useNativeDriver: false,
-                //         friction: 5
-                //     }).start()
                 if (gesture.dx > SWIPE_THRESHOLD) {
                     console.log('Swiping right to previous step') // Debug log
                     swipeComplete(-1) // Move to previous step
@@ -90,12 +94,20 @@ const TutorCookScreen = () => {
 
         })
     ).current
+    
 
     const swipeComplete = (direction) => {
         const newIndex = currentStepIndex + direction;
-        console.log('New index:', newIndex); // Debug log
-        console.log('Current index:', currentStepIndex); // Debug log
-        console.log('Direction:', direction); // Debug log
+        console.log('New index:', newIndex, 'Total steps:', totalSteps.current);
+        if (newIndex < 0 || newIndex >= totalSteps.current) {
+            console.log('Index cannot be less than 0'); // Debug log
+            Animated.timing(position, {
+                toValue: { x: 0, y: 0 },
+                duration: 200,
+                useNativeDriver: false
+            }).start()
+            return;
+        }
 
         // Reset position with animation
         Animated.timing(position, {
@@ -138,28 +150,6 @@ const TutorCookScreen = () => {
         }
     }
 
-    // Debug button for testing
-    // const renderDebugButtons = () => {
-    //     console.log('Current Step Index:', currentStepIndex); // Log current step index
-    //     console.log('Total Steps:', cookingSteps.length); 
-    //     return(
-    //     <View style={styles.debugButtons}>
-    //         <TouchableOpacity 
-    //             style={styles.debugButton} 
-    //             onPress={() => currentStepIndex > 0 && setCurrentStepIndex(currentStepIndex - 1)}
-    //         >
-    //             <Text style={styles.debugButtonText}>Previous</Text>
-    //         </TouchableOpacity>
-    //         <TouchableOpacity 
-    //             style={styles.debugButton} 
-    //             onPress={
-    //                 () => currentStepIndex < cookingSteps.length - 1 && setCurrentStepIndex(currentStepIndex + 1)}
-
-    //         >
-    //             <Text style={styles.debugButtonText}>Next</Text>
-    //         </TouchableOpacity>
-    //     </View>
-    // )}
     const handleFinish = () => {
         updateCookingStatus(meal.idMeal, "Completed");
         navigation.navigate('home');
@@ -223,7 +213,7 @@ const TutorCookScreen = () => {
                 filled
                 onPress={() => {
                     updateCookingStatus(meal.idMeal, "Completed");
-                    navigation.navigate('home');
+                    navigation.navigate('Home');
                 }}
                 style={{
                     marginTop: 40,
@@ -247,8 +237,6 @@ const TutorCookScreen = () => {
                     </View>
                 )}
             </View>
-
-            {/* {__DEV__ && renderDebugButtons()} Debug buttons in development */}
         </SafeAreaView>
     )
 }

@@ -17,6 +17,7 @@
     "orientation": "portrait",
     "icon": "./assets/avatar.png",
     "userInterfaceStyle": "light",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/avatar.png",
       "resizeMode": "contain",
@@ -34,8 +35,11 @@
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/avatar.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#ffffff",
+        "package": "com.franco.findplace",
+        "googleMapsApiKey": "AIzaSyDoFwHOy-NeFHMzAN5JufmNH-2-5Vb2oBA"
       }
+      
     },
     "web": {
       "favicon": "./assets/avatar.png"
