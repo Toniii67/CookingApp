@@ -14,3 +14,6 @@ react-native-responsive-screen
 react-native-safe-area-context
 react-native-scroll-view
 react-native-svg
+firebase
+react-native-maps
+expo-location
